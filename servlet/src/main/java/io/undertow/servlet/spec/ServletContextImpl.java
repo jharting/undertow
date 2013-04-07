@@ -443,13 +443,26 @@ public class ServletContextImpl implements ServletContext {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T extends EventListener> T createListener(final Class<T> clazz) throws ServletException {
-        try {
-            return deploymentInfo.getClassIntrospecter().createInstanceFactory(clazz).createInstance().getInstance();
-        } catch (InstantiationException e) {
-            throw UndertowServletMessages.MESSAGES.couldNotInstantiateComponent(clazz.getName(), e);
-        } catch (NoSuchMethodException e) {
-            throw UndertowServletMessages.MESSAGES.couldNotInstantiateComponent(clazz.getName(), e);
+        ListenerInfo listener = null;
+        for (ListenerInfo listenerInfo : deployment.getDeploymentInfo().getListeners()) {
+            if (listenerInfo.getListenerClass().equals(clazz)) {
+                listener = listenerInfo;
+                break;
+            }
+        }
+
+        if (listener != null) {
+            return (T) new ManagedListener(listener).instance();
+        } else {
+            try {
+                return deploymentInfo.getClassIntrospecter().createInstanceFactory(clazz).createInstance().getInstance();
+            } catch (InstantiationException e) {
+                throw UndertowServletMessages.MESSAGES.couldNotInstantiateComponent(clazz.getName(), e);
+            } catch (NoSuchMethodException e) {
+                throw UndertowServletMessages.MESSAGES.couldNotInstantiateComponent(clazz.getName(), e);
+            }
         }
     }
 

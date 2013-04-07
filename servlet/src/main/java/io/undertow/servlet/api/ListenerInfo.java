@@ -21,6 +21,7 @@ package io.undertow.servlet.api;
 import java.lang.reflect.Constructor;
 import java.util.EventListener;
 
+import javax.servlet.AsyncListener;
 import javax.servlet.ServletContextAttributeListener;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRequestAttributeListener;
@@ -39,7 +40,8 @@ public class ListenerInfo {
             ServletRequestListener.class,
             ServletRequestAttributeListener.class,
             javax.servlet.http.HttpSessionListener.class,
-            javax.servlet.http.HttpSessionAttributeListener.class};
+            javax.servlet.http.HttpSessionAttributeListener.class,
+            AsyncListener.class};
 
     private final Class<? extends EventListener> listenerClass;
     private final InstanceFactory<? extends EventListener> instanceFactory;
