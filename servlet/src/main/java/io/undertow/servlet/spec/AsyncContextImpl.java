@@ -40,7 +40,6 @@ import io.undertow.server.HttpServerExchange;
 import io.undertow.servlet.UndertowServletLogger;
 import io.undertow.servlet.UndertowServletMessages;
 import io.undertow.servlet.api.Deployment;
-import io.undertow.servlet.api.InstanceFactory;
 import io.undertow.servlet.api.ServletDispatcher;
 import io.undertow.servlet.api.ThreadSetupAction;
 import io.undertow.servlet.core.CompositeThreadSetupAction;
@@ -293,14 +292,7 @@ public class AsyncContextImpl implements AsyncContext {
 
     @Override
     public <T extends AsyncListener> T createListener(final Class<T> clazz) throws ServletException {
-        try {
-            InstanceFactory<T> factory = ((ServletContextImpl) this.servletRequest.getServletContext()).getDeployment().getDeploymentInfo().getClassIntrospecter().createInstanceFactory(clazz);
-            return factory.createInstance().getInstance();
-        } catch (NoSuchMethodException e) {
-            throw new ServletException(e);
-        } catch (InstantiationException e) {
-            throw new ServletException(e);
-        }
+        return servletRequest.getServletContext().createListener(clazz);
     }
 
     @Override
